@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      color: white;
+    }
+
+    h1 {
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+
+    .cell {
+      background-color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .cell:hover {
+      background-color: #333;
+    }
+
+    .x {
+      color: red;
+    }
+
+    .o {
+      color: dodgerblue;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+
+    .reset-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 16px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .reset-btn:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tic Tac Toe</h1>
+  <div class="board" id="board"></div>
+  <div class="status" id="status">Turni i lojtarit: X</div>
+  <button class="reset-btn" onclick="resetGame()">Reset</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const statusText = document.getElementById('status');
+    let currentPlayer = 'X';
+    let cells = Array(9).fill(null);
+    let gameOver = false;
+
+    function createBoard() {
+      board.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        cell.addEventListener('click', handleClick);
+        board.appendChild(cell);
+      }
+    }
+
+    function handleClick(e) {
+      const index = e.target.dataset.index;
+      if (cells[index] || gameOver) return;
+
+      cells[index] = currentPlayer;
+      e.target.textContent = currentPlayer;
+      e.target.classList.add(currentPlayer.toLowerCase());
+
+      if (checkWin()) {
+        statusText.textContent = `Player ${currentPlayer} WIN! 🎉`;
+        gameOver = true;
+        return;
+      }
+
+      if (cells.every(cell => cell)) {
+        statusText.textContent = "Both wins! 🤝";
+        gameOver = true;
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      statusText.textContent = `Player: ${currentPlayer}`;
+    }
+
+    function checkWin() {
+      const winCombos = [
+        [0,1,2], [3,4,5], [6,7,8], // horizontale
+        [0,3,6], [1,4,7], [2,5,8], // vertikale
+        [0,4,8], [2,4,6]           // diagonale
+      ];
+
+      return winCombos.some(combo => {
+        const [a, b, c] = combo;
+        return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
+      });
+    }
+
+    function resetGame() {
+      cells = Array(9).fill(null);
+      currentPlayer = 'X';
+      gameOver = false;
+      statusText.textContent = `Player: ${currentPlayer}`;
+      createBoard();
+    }
+
+    // Inicializo tabelën
+    createBoard();
+  </script>
+</body>
+</html>
